@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<!--
+***********************************************************************
+*   Source File : CM_orderlist.xsd
+*   
+*   Creation    : 21/05/2002
+*
+*   Author      : C BOUTON  from Society : EADS S&DE
+*
+*   Environment : XML Schema 1.0
+*
+*   Abstract    : This is the XML Schema defining the format of
+*                 SAF order list
+*                 The root element is <orderlist>
+*
+***********************************************************************
+*  Modification       Date     Object
+*
+***********************************************************************
+  -->
+	<!-- 
+***********************************************************************
+*    User identification
+***********************************************************************
+  -->
+	<xs:simpleType name="mailAddress">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="phoneNumber">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+        <xs:complexType name="ftpOptions">
+                <xs:sequence>
+                        <xs:element name="computer" type="xs:string"/>
+                        <xs:element name="login" type="xs:string"/>
+                        <xs:element name="pass" type="xs:string"/>
+                        <xs:element name="directory" type="xs:string"/>
+                </xs:sequence>
+        </xs:complexType>
+	<xs:complexType name="address">
+		<xs:sequence>
+			<xs:element name="street" type="xs:string"/>
+			<xs:element name="city" type="xs:string"/>
+			<xs:element name="zipCode" type="xs:string"/>
+			<xs:element name="state" type="xs:string" minOccurs="0" />
+			<xs:element name="country" type="xs:string"/>
+			<xs:element name="phone" type="phoneNumber"/>
+			<xs:element name="fax" type="phoneNumber" minOccurs="0" />
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="user">
+		<xs:sequence>
+			<xs:element name="userID" type="xs:string"/>
+			<xs:element name="userGroup" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element name="firstName" type="xs:string"/>
+			<xs:element name="lastName" type="xs:string"/>
+			<xs:element name="mail" type="mailAddress"/>
+			<xs:element name="deliveryAddress" type="address"/>
+			<xs:element name="invoiceAddress" type="address"/>
+			<xs:element name="invoiceMail" type="mailAddress"/>
+			<xs:element name="transferOptions" type="ftpOptions" minOccurs="0"/>
+			<xs:element name="customerOrganisation" type="xs:string"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:simpleType name="CCSDS_date">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}.[0-9]{3}"/>
+			<!-- <xs:pattern value="[0-9]{4-2-2T2:2:2.3}"/> -->
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="longitude">
+		<xs:restriction base="xs:float">
+			<xs:minInclusive value="-180.0000"/>
+			<xs:maxInclusive value="+180.0000"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="latitude">
+		<xs:restriction base="xs:float">
+			<xs:minInclusive value="-90.0000"/>
+			<xs:maxInclusive value="+90.0000"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="bulkDates">
+		<xs:sequence>
+			<xs:element name="bulkStartDate" type="CCSDS_date"/>
+			<xs:element name="bulkEndDate" type="CCSDS_date"/>
+		</xs:sequence>
+	</xs:complexType>
+	<!-- 
+***********************************************************************
+*    Product Format & Delivery (PFD) unit definition
+*    Each PFD unit defines a set of products 
+*    with the same format/delivery options.
+**********************************************************************
+  -->
+	<xs:simpleType name="productID">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="metadataField">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:complexType name="UMARF_MetadataField">
+		<xs:simpleContent>
+			<xs:extension base="metadataField">
+				<xs:attribute name="fieldName" type="xs:string"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<!-- List of metadata (name and value) needed for some SAF orders (APNA, AAST, AATR, AAAR, LMAP,...)-->
+	<xs:complexType name="additionalInfo">
+		<xs:sequence>
+			<xs:element name="field" type="UMARF_MetadataField" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+        <!--
+	<xs:complexType name="bandSubsetting">
+		<xs:sequence>
+			<xs:element name="band" type="xs:unsignedShort" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+        -->
+	<!--  O3M SAF need -->
+	<xs:complexType name="gasSubsetting">
+		<xs:sequence>
+			<xs:element name="gasTrace" type="xs:string" maxOccurs="10"/>
+		</xs:sequence>
+	</xs:complexType>
+	<!-- formerly names geoSubsetting
+	<xs:complexType name="bitmapSubsetting">
+		<xs:sequence>
+			<xs:element name="firstLine" type="xs:unsignedInt"/>
+			<xs:element name="lastLine" type="xs:unsignedInt"/>
+			<xs:element name="firstColumn" type="xs:unsignedInt"/>
+			<xs:element name="lastColumn" type="xs:unsignedInt"/>
+		</xs:sequence>
+	</xs:complexType>
+        -->
+	<xs:complexType name="RegionOfInterest">
+		<xs:sequence>
+			<xs:element name="upperLeftLatitude" type="latitude"/>
+			<xs:element name="upperLeftLongitude" type="longitude"/>
+			<xs:element name="lowerRightLatitude" type="latitude"/>
+			<xs:element name="lowerRightLongitude" type="longitude"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="TimeOfInterest">
+		<xs:sequence>
+			<xs:element name="startTime" type="CCSDS_date"/>
+			<xs:element name="endTime" type="CCSDS_date"/>
+		</xs:sequence>
+	</xs:complexType>
+	<!--
+	formatType
+	-->
+	<xs:simpleType name="formatType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="BUFR"/>
+			<xs:enumeration value="NetCDF"/>
+			<xs:enumeration value="HDF5"/>
+			<xs:enumeration value="GRIB"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<!--
+	compressionType
+	-->
+	<xs:simpleType name="compressionType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="PKZIP"/> <!-- zip -->
+			<xs:enumeration value="GZIP"/>
+			<xs:enumeration value="BZIP2"/>
+			<xs:enumeration value="COMP"/>  <!-- Unix compress -->
+			<xs:enumeration value="NONE"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<!--
+	outputType
+	-->
+	<xs:simpleType name="outputType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="CDR"/>
+			<xs:enumeration value="DVD"/>
+			<xs:enumeration value="FTP"/>
+			<xs:enumeration value="DAT"/>
+			<xs:enumeration value="DLT"/>
+			<xs:enumeration value="NET"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="PFDUnit">
+		<xs:sequence>
+			<xs:element name="productID" type="productID"/>
+                        <!-- Not used at the moment
+			<xs:element name="bandSubsetting" type="bandSubsetting" minOccurs="0"/>
+			<xs:element name="bitmapSubsetting" type="bitmapSubsetting" minOccurs="0"/>
+                        -->
+			<xs:element name="gasSubsetting" type="gasSubsetting" minOccurs="0"/>
+			<xs:element name="regionOfInterest" type="RegionOfInterest" minOccurs="0"/>
+			<xs:element name="timeOfInterest" type="TimeOfInterest" minOccurs="0"/>
+			<xs:element name="additionalInfo" type="additionalInfo"/>
+			<xs:element name="format" type="formatType" minOccurs="0"/>
+			<xs:element name="compression" type="compressionType" minOccurs="0"/>
+			<xs:element name="output" type="outputType"/>
+		</xs:sequence>
+	</xs:complexType>
+	<!-- 
+***********************************************************************
+*    Order & Order List Definition
+*    An order corresponds to a set of PFD units, for a given user.
+***********************************************************************
+  -->
+	<xs:element name="orderlist" type="orderlist"/>
+	<xs:complexType name="orderlist">
+		<xs:sequence>
+			<xs:element name="order" type="order" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="order" type="order"/>
+	<xs:complexType name="order">
+		<xs:sequence>
+			<xs:element name="createOrderDate" type="CCSDS_date"/>
+			<xs:element name="status" type="xs:string"/>
+			<xs:element name="statusOrderDate" type="CCSDS_date"/>
+			<xs:element name="orderID" type="xs:string"/>
+			<xs:element name="bulkDates" type="bulkDates" minOccurs="0"/>
+			<xs:element name="user" type="user"/>
+			<xs:element name="orderPriority" type="priority"/>
+			<xs:element name="PFDUnit" type="PFDUnit" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="id" type="xs:string" use="required"/>
+		<xs:attribute name="priority" type="priority" use="required"/>
+	</xs:complexType>
+	<xs:simpleType name="priority">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="NORMAL"/>
+			<xs:enumeration value="URGENT"/>
+			<xs:enumeration value="EXCEPTIONAL"/>
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>
