@@ -24,7 +24,9 @@ public abstract class ListOfOrderableProducts {
 		    "h101",
 		    "h102",
 		    "h103",
-		    "h104"    		    
+		    "h104",
+		    "h34",
+		    "h35"
 		));
 
 }
